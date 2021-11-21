@@ -6,27 +6,51 @@ import {
   StatusBar,
   TextInput,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import CustomView from '../component/Common/CustomView';
 import Contact from '../assests/images/contact-love.svg';
 import Search from '../assests/images/search.svg';
 import SingleMessage from '../component/Common/SingleMessage';
+import Icon from 'react-native-vector-icons/AntDesign';
+import {login, logout} from '../redux/Actions/AuthActions/index';
+import {useDispatch, useSelector} from 'react-redux';
+import ConfirmModal from '../component/Common/ConfirmModal';
+import MainModal from '../component/Common';
 
 const Chat = () => {
+  const dispatch = useDispatch();
+  const [showModal,setShowModal] = useState(false)
+  const userLogin = useSelector(state => state.authToken.userLogin);
+  const {user} = userLogin;
   return (
     <CustomView>
       <StatusBar
         animated={true}
         barStyle="dark-content"
-        // backgroundColor="#fff"
+        backgroundColor="#fff"
       />
+      <MainModal visible={showModal} closeModal={() => setShowModal(false)}>
+        <ConfirmModal
+          
+          text="Are you sure you want to logout?"
+          closeModal={() => setShowModal(false)}
+          onPress={() => dispatch(logout())}
+        />
+      </MainModal>
       <View style={styles.content}>
         {/* HEADER */}
         <View style={styles.header}>
-          <Text style={styles.text}>Chats</Text>
-          <View style={styles.icon}>
-            <Contact />
+          <View>
+            <Text style={styles.text}>{user?.Name}</Text>
+            <Text style={styles.text2}>{user?.Email}</Text>
           </View>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={ () => setShowModal(true)}
+            style={styles.icon}>
+            <Icon name="logout" color="#000" size={20} />
+          </TouchableOpacity>
         </View>
         {/* SEARCH INPUT */}
         <View style={styles.search}>
@@ -86,7 +110,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   text: {
-    fontSize: 30,
+    fontSize: 20,
     fontWeight: '700',
     color: '#000',
   },
@@ -95,10 +119,16 @@ const styles = StyleSheet.create({
     height: 46,
     borderWidth: 1,
     borderRadius: 15,
-    borderColor: '#E8E6EA',
+    borderColor: '#FFA91F',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  text2: {
+    fontSize: 15,
+    color: '#FFA91F',
+    fontWeight: '700',
+    marginTop: '3%',
   },
   search: {
     width: '100%',
@@ -106,7 +136,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 15,
     borderColor: '#E8E6EA',
-    marginTop: 40,
+    marginTop: 20,
     alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
